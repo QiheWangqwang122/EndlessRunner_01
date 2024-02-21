@@ -28,7 +28,12 @@ class Menu extends Phaser.Scene {
           fontSize: '24px', 
           fill: '#FFF' 
         }).setOrigin(0.5);
-      
+
+        this.acknowledgmentText = this.add.text(400, 500, 'Acknowledgment', {
+            fontSize: '24px',
+            fill: '#FFF'
+        }).setOrigin(0.5);
+
         // Calculate cursor positions
         const cursorPadding = 30;
         const playTextCursorX = this.playText.x + this.playText.width / 2 + cursorPadding;
@@ -51,14 +56,35 @@ class Menu extends Phaser.Scene {
       }
     update() {
       // Move cursor between options
-      if (Phaser.Input.Keyboard.JustDown(this.cursors.down) && this.currentSelection === 0) {
-        this.cursor.setPosition(this.cursorInitialX, this.describeText.y);
-        this.sound.play('cursorSound');
-        this.currentSelection = 1;
-      } else if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.currentSelection === 1) {
-        this.cursor.setPosition(this.cursorInitialX, this.playText.y);
-        this.currentSelection = 0;
-        this.sound.play('cursorSound');
+      if (Phaser.Input.Keyboard.JustDown(this.cursors.down) ) {
+          if( this.currentSelection === 0){
+              this.cursor.setPosition(this.cursorInitialX, this.describeText.y);
+              this.sound.play('cursorSound');
+              this.currentSelection = 1;
+          }else if (this.currentSelection === 1){
+              this.cursor.setPosition(this.cursorInitialX, this. acknowledgmentText.y);
+              this.currentSelection = 2;
+              this.sound.play('cursorSound');
+          }else if (this.currentSelection === 2) {
+              this.cursor.setPosition(this.cursorInitialX, this.playText.y);
+              this.currentSelection = 0;
+              this.sound.play('cursorSound');
+          }
+
+      } else if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
+          if( this.currentSelection === 0){
+              this.cursor.setPosition(this.cursorInitialX, this.acknowledgmentText.y);
+              this.sound.play('cursorSound');
+              this.currentSelection = 2;
+          }else if (this.currentSelection === 1){
+              this.cursor.setPosition(this.cursorInitialX, this.playText.y);
+              this.currentSelection = 0;
+              this.sound.play('cursorSound');
+          }else if (this.currentSelection === 2) {
+              this.cursor.setPosition(this.cursorInitialX, this.describeText.y);
+              this.currentSelection = 1;
+              this.sound.play('cursorSound');
+          }
       }
   
       // Select option
@@ -70,10 +96,12 @@ class Menu extends Phaser.Scene {
             // clear last score
 
 
-        } else {
+        } else if (this.currentSelection === 1) {
           // Show how to play
           this.scene.start('describeScene');
           
+        }else {
+            this.scene.start('acknowledgmentScene');
         }
       }
     }
